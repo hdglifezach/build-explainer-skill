@@ -1,6 +1,6 @@
 ---
 name: build-explainer
-description: Make a 75-150 s vertical (1080x1920, 30 fps) "build it from scratch" 3D engineering explainer Short in Blender, ConstrucBIM-style format with an original script and look - one continuous moving camera over one stylized low-poly set built up piece by piece, a faceless wooden mannequin as "you", label tags with leader lines, yellow highlight flashes, big counters, monospace caption cards, word-timed captions, a calm local narrator (Kokoro), an ACE-Step music bed and soft dings, QA'd at 2 fps and registered in VideoHub. Use when the owner types /build-explainer <thing>, or asks for a "build a X from scratch" / "if you ... you've got a ..." / ConstrucBIM-style explainer video.
+description: Make a 75-150 s vertical (1080x1920, 60 fps) "build it from scratch" 3D engineering explainer Short in Blender, ConstrucBIM-style format with an original script and look - one continuous moving camera over one stylized low-poly set built up piece by piece, a faceless wooden mannequin as "you", label tags with leader lines, yellow highlight flashes, big counters, monospace caption cards, word-timed captions, a calm local narrator (Kokoro), an ACE-Step music bed and soft dings, QA'd at 2 fps and registered in VideoHub. Use when the owner types /build-explainer <thing>, or asks for a "build a X from scratch" / "if you ... you've got a ..." / ConstrucBIM-style explainer video.
 ---
 
 # /build-explainer <thing>
@@ -49,7 +49,7 @@ consciously. The first 1-2 s must grab WITHOUT the viewer thinking:
   in; then the turn ("...so why doesn't it?") as the action resolves.
 - **A sharp sound in frame 1** (snap, crack, hit) - the music can start on that punch or come in after the hook.
 - Then "here's why" -> rewind / match-cut into line 1 of the loop formula.
-- **Thumbnail test:** look at frame 0 and frame 30 (and 15, 45) as if each were the thumbnail. Each must read alone:
+- **Thumbnail test:** look at 0 s and 1 s (and 0.5, 1.5 s = frames 0, 30, 60, 90 at 60 fps) as if each were the thumbnail. Each must read alone:
   one subject, action visible, big text.
 - The loop ending must flow back into the HOOK (last frame matches frame 0's state + camera), not into a calm intro.
 - Budget: hook 1.5-3 s; it may replay later in the film slowed down as the explained cutaway.
@@ -139,7 +139,7 @@ $PY -X utf8 $SKILL/scripts/transcribe.py audio/vo.wav --vocab "Term1,Term2"   # 
 
 ### 5. Snaps QA (iterate until it reads)
 ```
-blender ... -P build.py -- snaps 45,240,470,... tag [draft]
+blender ... -P build.py -- snaps 90,480,940,... tag [draft]     # frame numbers are at 60 fps (frame = seconds x 60)
 $PY .../overlay_compose.py <film> stills tag
 $PY .../qa_sheet.py snaps "snaps/tag_*_ov.jpg" snaps/sheet_tag --cols 6 --rows 3 --w 300
 ```
@@ -148,7 +148,7 @@ part, nothing clipping/intersecting, the mannequin visible and reading clearly, 
 not covering the action. Debug invisible things with a temporary anchor (e.g. `you_head`) and read its json.
 ### 6. Full render: ONE Blender process (the GPU is shared)
 `blender -b --factory-startup -P build.py -- render 0 <NF-1> > render.log` (run in background; resumable: skips
-finished frames). EEVEE at 24 samples ran ~0.8 s/frame for the castle (~45 min for 106 s).
+finished frames). Films are 60 fps (FPS = 60 in spec.py). EEVEE at 24 samples ran ~0.8 s/frame for the castle (~90 min for 106 s at 60 fps).
 ### 7. Music + SFX + mix
 - Music (any royalty-free music file you have the rights to works; copy it to `audio/music_takes/`). Optional local generator:
   ACE-Step 1.5 (MIT, own music; never ripped commercial music), if you have it installed:

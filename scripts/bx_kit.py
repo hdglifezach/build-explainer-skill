@@ -2,7 +2,7 @@
 
 Import it from a film's build.py (the film copies this file next to build.py so later kit edits never break old films):
     import sys; sys.path.insert(0, str(BASE)); import bx_kit as K
-    K.setup_scene(res=(1080, 1920), fps=30, samples=24)
+    K.setup_scene(res=(1080, 1920), fps=60, samples=24)
 
 Everything is a pure function of the frame: the film's animate(f) sets every transform/material value for frame f,
 then render_frame() renders it. No keyframes, no simulation state -> any frame can be rendered alone, in any order.
@@ -31,7 +31,7 @@ from mathutils import Euler, Matrix, Vector
 
 scene = None
 RES = (1080, 1920)
-FPS = 30
+FPS = 60
 FOG = {"near": 35.0, "far": 230.0, "max": 0.85, "color": (0.74, 0.80, 0.86)}
 OUTLINE = {"on": True, "color": (0.10, 0.09, 0.08), "w": 0.035}
 HL_YELLOW = (1.0, 0.78, 0.08)
@@ -100,7 +100,7 @@ def lin(c):
 
 
 # ------------------------------------------------------------------ scene + look
-def setup_scene(res=(1080, 1920), fps=30, samples=24, draft=False, sky=(0.62, 0.74, 0.88), horizon=None,
+def setup_scene(res=(1080, 1920), fps=60, samples=24, draft=False, sky=(0.62, 0.74, 0.88), horizon=None,
                 sun_dir=(-35, 0, -40), sun_energy=3.2, sun_color=(1.0, 0.95, 0.86), sky_strength=0.9,
                 look="AgX - Medium High Contrast"):
     """Factory-empty scene, EEVEE, AgX, soft daylight. Returns the scene."""

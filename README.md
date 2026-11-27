@@ -16,7 +16,7 @@ When the user pastes this repo link and asks to set it up, do exactly this:
 6. Tell the user: restart Claude Code (or start a new session) so the `/build-explainer` skill loads, then type `/build-explainer <thing>` (for example `/build-explainer a castle`). Mention that films are written to the `films_dir` shown in `config.json` and that the music bed can be any royalty-free file they own the rights to.
 
 ## What it makes
-`/build-explainer <thing>` makes a 75-150 second vertical (1080x1920, 30 fps) "build it from scratch" 3D engineering
+`/build-explainer <thing>` makes a 75-150 second vertical (1080x1920, 60 fps) "build it from scratch" 3D engineering
 explainer Short in Blender. One continuous moving camera flies over one stylized low-poly set that grows piece by piece
 ("If you put a ring of logs around your house, you've got a castle. But wood burns. So you build it out of stone...").
 A faceless wooden mannequin plays "you". The video has label tags with leader lines, yellow highlight flashes on each

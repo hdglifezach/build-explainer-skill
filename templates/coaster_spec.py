@@ -8,7 +8,7 @@ import json
 from pathlib import Path
 
 BASE = Path(__file__).resolve().parent
-FPS = 30
+FPS = 60
 LINES = json.loads((BASE / "audio" / "vo_lines.json").read_text(encoding="utf8"))
 _EARS = json.loads((BASE / "audio" / "vo.scan" / "ears.json").read_text(encoding="utf8"))
 WORDS = [w for s in _EARS["segments"] for w in s["words"]]
