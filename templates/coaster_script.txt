@@ -1,0 +1,26 @@
+# Build a Roller Coaster - narration lines (one take per line). "|| s" = pause after.
+If you build a wooden ramp and push a cart off the top, you've got a roller coaster. || 0.45
+But friction eats its speed, and it stops halfway up the next hill.
+So you hook the cart to a chain and drag it to the top of the first hill.
+Gravity does the rest. That's the lift hill.
+But what if the chain snaps halfway up?
+So you bolt a saw-tooth strip along the track, and a hinged latch on the cart drops into every tooth.
+If the cart starts rolling back, the latch catches it. That's the anti-rollback.
+And that click-clack on the way up? That's it, working.
+But over the next hill, the cart wants to keep flying, and lifts right off the rails.
+So you add wheels under and beside the rail, and clamp it from three sides.
+Those are the upstop and guide wheels.
+Now you want to go upside down, so you bend the track into a circle.
+But to clear the top, it needs so much speed that riders at the bottom feel about six times their weight.
+So you stretch the loop into a teardrop. Wide at the bottom, tight at the top.
+That's the clothoid loop.
+But the cart comes back way too fast, and brake pads wear out and overheat.
+So you run metal fins under the cart between strong magnets. They slow it without touching.
+That's the magnetic brake. || 0.5
+Now it's safe. || 0.2
+Until you add a second train, and the first one stalls.
+So you split the track into sections, and only one train is allowed in each.
+That's the block system. || 0.5
+Koney Island's first loop, in eighteen ninety-five, was a perfect circle.
+Riders hurt their necks so often, plenty of people paid just to watch.
+All that engineering, just to fix what happens || 0.0

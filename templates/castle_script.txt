@@ -1,0 +1,35 @@
+# Build a Castle - narration lines (one take per line). "|| s" = pause after.
+If you put a ring of sharpened logs around your house, you've got a castle. || 0.45
+But wood burns.
+One torch, and by sunrise, your wall is ash.
+So you build it out of stone, taller than three men, and up to ten feet thick.
+That's the curtain wall.
+But the enemy just brings ladders, and climbs right over.
+So you dig a deep ditch all the way around, and flood it.
+That's the moat.
+But now, you can't get out either.
+So you build a bridge that swings up on chains.
+That's the drawbridge.
+And behind it, a heavy grid of oak and iron drops down.
+That's the portcullis.
+But gates still get smashed.
+So you stretch the gate into a stone tunnel, with holes in its ceiling.
+Anyone stuck inside gets stones and scalding water from above.
+Those are the murder holes.
+But your archers up top are standing in the open.
+So you cut thin slits into the walls.
+You can aim out, but they can barely aim in.
+That's the arrow slit.
+Inside the towers, the stairs spiral up.
+Some say they turn clockwise, to jam an attacker's sword arm.
+But plenty turn the other way, so it's probably a myth. || 0.45
+Now you're safe. || 0.2
+Until the enemy builds a trebuchet, and throws a stone heavier than a man.
+One hit after another, until the wall cracks.
+So you build a second, taller wall inside the first.
+Break through one, and you're trapped between two walls of archers.
+That's the concentric castle. || 0.55
+Krak des Chevaliers, in Syria, was built just like this.
+In twelve seventy-one, the attackers took the outer wall.
+And won the inner one with a forged letter, ordering the knights to surrender. || 0.4
+And that's how one of the strongest castles ever built ended up no better than || 0.0
