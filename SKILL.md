@@ -5,25 +5,28 @@ description: Make a 75-150 s vertical (1080x1920, 30 fps) "build it from scratch
 
 # /build-explainer <thing>
 
-**Path variables used below** (set them in your shell; see README): `$BX_FILMS` films root, `$BX_SKILL` this skill's folder,
-`$PY` Python env, `$BLENDER` Blender 5.x executable, `$KOKORO_MODELS` Kokoro model folder (read by narrate.py),
-optional: `$EARS_PY` word-timestamp tool (writes `audio/vo.scan/ears.json`), `$ACESTEP_PY`/`$MUSIC_PY` ACE-Step runner.
+**Paths come from `config.json`** in this skill folder (`~/.claude/skills/build-explainer/config.json`; read it first; if it is
+missing run `python setup/install.py` from the skill folder, see README). Keys: `python` (venv python), `blender`, `ffmpeg`,
+`kokoro_models`, `films_dir`, `encoder`, `font_bold`, `font_mono`. Below, `$PY` = config `python`, `$BLENDER` = config `blender`,
+`$FILMS` = config `films_dir`, `$SKILL` = this skill's folder (the scripts read config.json themselves).
 VideoHub (steps 9-10) and earshot are the owner's optional private tools and can be skipped.
 
-One film = one folder `$BX_FILMS/<slug>/` (slug like `build-a-castle`).
+One film = one folder `$FILMS/<slug>/` (slug like `build-a-castle`).
 Reference film (copy its files to start): `<skill>/templates/castle_*` (castle_build.py -> build.py, castle_spec.py -> spec.py, castle_script.*, plus scripts/bx_kit.py)
 (`script.md`, `script.txt`, `spec.py`, `build.py`, `bx_kit.py`).
-Kit + tools live in `$BX_SKILL/scripts/` (`$BX_SKILL` = `~/.claude/skills/build-explainer`):
+Kit + tools live in `$SKILL/scripts/` (`$SKILL` = `~/.claude/skills/build-explainer`):
 
 | Script | Job |
 |---|---|
+| `bx_config.py` | loads `config.json` (paths, encoder, fonts) for the other scripts |
+| `transcribe.py` | faster-whisper word timestamps -> `audio/vo.scan/ears.json` + `ears.md` |
 | `narrate.py` | Kokoro narration, one take per script line, controlled pauses -> `audio/vo.wav` + `vo_lines.json` |
 | `bx_kit.py` | Blender kit: look (sky, sun, distance fog, toon outline), materials with a highlight hook, `Mannequin` + pose library, `Swarm` particles, `CamPath` one-camera spline, anchors for 2D overlays, the snaps/render/anchors CLI |
-| `overlay_compose.py` | title, captions, tags + leader lines, counters, cards drawn on the frames, NVENC encode with the mix; `stills` mode for snaps |
+| `overlay_compose.py` | title, captions, tags + leader lines, counters, cards drawn on the frames, encode with the mix (NVENC or libx264 per config); `stills` mode for snaps |
 | `make_mix.py` | voice-first mix: bed ~14 dB under the voice, soft SFX on cue, -14 LUFS / -1.5 dBTP, one limiter |
 | `qa_sheet.py` | contact sheets of snaps, or of the WHOLE video at 2 fps |
 
-Python for tools: `$PY` (a Python 3.10+ env with numpy, scipy, soundfile, Pillow, kokoro-onnx, faster-whisper). Blender: `"$BLENDER" -b --factory-startup -P build.py -- ...`
+Python for tools: `$PY` (the installer's venv: numpy, scipy, soundfile, Pillow, kokoro-onnx, faster-whisper). Blender: `"$BLENDER" -b --factory-startup -P build.py -- ...`
 
 ## The format (make it ORIGINAL: own script, own models, own look; never copy the channel's scripts or assets)
 - 75-150 s, ONE continuous camera move (no cuts): reframe every 1.5-3 s with push-ins, orbits, crane-ups, pull-outs.
@@ -71,14 +74,14 @@ consciously. The first 1-2 s must grab WITHOUT the viewer thinking:
 
 ### 2. Narration + word times
 ```
-PY=python   # the env described above
-$PY -X utf8 $BX_SKILL/scripts/narrate.py script.txt audio/vo.wav --speed 1.0 --gap 0.28 --term-gap 0.5
-$PY -X utf8 $EARS_PY audio/vo.wav --no-separate --no-events --no-speakers --vocab "Term1,Term2"
+PY=<config python>
+$PY -X utf8 $SKILL/scripts/narrate.py script.txt audio/vo.wav --speed 1.0 --gap 0.28 --term-gap 0.5
+$PY -X utf8 $SKILL/scripts/transcribe.py audio/vo.wav --vocab "Term1,Term2"   # -> audio/vo.scan/ears.json + ears.md
 ```
 - Voice: **Kokoro `am_michael`, speed 1.0** (calm, even US male; Apache-2.0, local, free). At 0.94 it is slower but a
   ~290-word script then runs ~119 s. Alternatives: `bm_george` (British), or Qwen3-TTS VoiceDesign (a local Qwen3-TTS install,
   describe "calm middle-aged male documentary narrator") if the owner wants more warmth.
-- **Pronunciation:** read back EVERY proper name and number with ears/Whisper. Kokoro misreads some ("Coney" ->
+- **Pronunciation:** read back EVERY proper name and number with transcribe.py/Whisper. Kokoro misreads some ("Coney" ->
   "Kenai"); test 3-4 spellings of the line in the scratchpad (e.g. "Koney", "Coh-nee", numbers spelled out:
   "eighteen ninety-five") and keep the one Whisper writes back correctly. Map spoken->written forms in spec `_SAYS`
   so caption alignment still counts letters right.
@@ -147,11 +150,12 @@ not covering the action. Debug invisible things with a temporary anchor (e.g. `y
 `blender -b --factory-startup -P build.py -- render 0 <NF-1> > render.log` (run in background; resumable: skips
 finished frames). EEVEE at 24 samples ran ~0.8 s/frame for the castle (~45 min for 106 s).
 ### 7. Music + SFX + mix
-- Music: ACE-Step 1.5 (MIT, own music; never ripped commercial music):
-  `$ACESTEP_PY $MUSIC_PY "<calm documentary underscore ...>" audio/music_takes --duration <DUR+6> --bpm 84 --count 1 --no-lm [--seed N]`
-  (count>1 gives one file; run twice with seeds). Pick with earshot `describe` (calm, low LRA, no ding-like hits that
+- Music (any royalty-free music file you have the rights to works; copy it to `audio/music_takes/`). Optional local generator:
+  ACE-Step 1.5 (MIT, own music; never ripped commercial music), if you have it installed:
+  `<acestep python> <music runner> "<calm documentary underscore ...>" audio/music_takes --duration <DUR+6> --bpm 84 --count 1 --no-lm [--seed N]`
+  (count>1 gives one file; run twice with seeds). Pick (optional earshot `describe`, else by listening/length) (calm, low LRA, no ding-like hits that
   fight the term dings); `measure music=true` gives the key -> pitch the dings to it.
-- SFX: earshot shipped bank via `sfx_render` (CC0 fits / computed): `notify/m2` dings pitched to the key (alternate two
+- SFX (earshot is optional; without it use CC0 packs or soft synthesised dings): earshot shipped bank via `sfx_render` (CC0 fits / computed): `notify/m2` dings pitched to the key (alternate two
   notes), `pro_impact/deep` soft thuds, `fit/hit/bamboo_tok` wood knocks. Or CC0 SFX packs (check licences).
 - `$PY -I .../make_mix.py <film>` -> `audio/mix.wav` (-14 LUFS, -1.5 dBTP). Check with earshot `measure` (and `timeline`).
 ### 8. Encode + full QA at 2 fps (owner rule, before delivery)

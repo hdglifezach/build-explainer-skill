@@ -27,17 +27,17 @@ from PIL import Image, ImageDraw, ImageFont
 W, H = 1080, 1920
 YEL = (255, 204, 31)
 WHITE = (255, 255, 255)
-BAHN = r"C:\Windows\Fonts\bahnschrift.ttf"
-MONO = r"C:\Windows\Fonts\consolab.ttf"
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from bx_config import cfg, load_font  # noqa: E402
+
+BAHN = cfg("font_bold")   # Bahnschrift if present, else the downloaded OFL font (config.json)
+MONO = cfg("font_mono")
+FFMPEG = cfg("ffmpeg")
+ENCODER = cfg("encoder")
 
 
 def font(size, weight="Bold"):
-    f = ImageFont.truetype(BAHN, size)
-    try:
-        f.set_variation_by_name(weight)
-    except Exception:
-        pass
-    return f
+    return load_font(BAHN, size, weight)
 
 
 F_CAP = font(84)
@@ -45,8 +45,8 @@ F_TITLE = font(118)
 F_TAG = font(38, "SemiBold")
 F_NUM = font(170)
 F_UNIT = font(40, "SemiBold")
-F_SMALL = ImageFont.truetype(MONO, 34)
-F_CARD = ImageFont.truetype(MONO, 44)
+F_SMALL = load_font(MONO, 34)
+F_CARD = load_font(MONO, 44)
 
 
 def load_spec(film):
@@ -326,9 +326,13 @@ def main():
             print("ov", p.name)
         return
     out = Path(sys.argv[3])
-    cmd = ["ffmpeg", "-v", "error", "-y", "-f", "rawvideo", "-pix_fmt", "rgb24", "-s", f"{W}x{H}", "-r", str(spec.FPS),
+    if ENCODER == "h264_nvenc":
+        venc = ["-c:v", "h264_nvenc", "-preset", "p7", "-rc", "vbr", "-cq", "19", "-b:v", "0"]
+    else:
+        venc = ["-c:v", "libx264", "-preset", "medium", "-crf", "18"]
+    cmd = [FFMPEG, "-v", "error", "-y", "-f", "rawvideo", "-pix_fmt", "rgb24", "-s", f"{W}x{H}", "-r", str(spec.FPS),
            "-i", "-", "-i", str(film / "audio" / "mix.wav"), "-map", "0:v", "-map", "1:a",
-           "-c:v", "h264_nvenc", "-preset", "p7", "-rc", "vbr", "-cq", "19", "-b:v", "0", "-pix_fmt", "yuv420p",
+           *venc, "-pix_fmt", "yuv420p",
            "-c:a", "aac", "-b:a", "192k", "-movflags", "+faststart", "-shortest", str(out)]
     pr = subprocess.Popen(cmd, stdin=subprocess.PIPE)
     last = None

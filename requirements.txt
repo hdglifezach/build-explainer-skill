@@ -1,0 +1,7 @@
+numpy
+scipy
+soundfile
+Pillow
+kokoro-onnx
+faster-whisper
+av<17  # faster-whisper 1.2 breaks on newer PyAV

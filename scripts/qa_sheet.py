@@ -9,17 +9,23 @@ Writes <out_prefix>_01.jpg, _02.jpg ... and prints their paths. Run with python.
 """
 import argparse
 import glob
+import os
 import subprocess
+import sys
 import tempfile
 from pathlib import Path
 
 from PIL import Image, ImageDraw, ImageFont
 
-FONT = r"C:\Windows\Fonts\consolab.ttf"
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from bx_config import cfg, load_font  # noqa: E402
+
+FONT = cfg("font_mono")
+FFMPEG = cfg("ffmpeg")
 
 
 def tile(items, out_prefix, cols, rows, w):
-    font = ImageFont.truetype(FONT, max(12, w // 14))
+    font = load_font(FONT, max(12, w // 14))
     per = cols * rows
     outs = []
     for s in range(0, len(items), per):
@@ -58,7 +64,7 @@ def main():
         tile(items, a.out_prefix, a.cols or 4, a.rows or 3, a.w or 360)
     else:
         tmp = Path(tempfile.mkdtemp(prefix="qa_"))
-        subprocess.run(["ffmpeg", "-v", "error", "-i", a.src, "-vf", f"fps={a.fps},scale=320:-2",
+        subprocess.run([FFMPEG, "-v", "error", "-i", a.src, "-vf", f"fps={a.fps},scale=320:-2",
                         str(tmp / "q_%05d.jpg")], check=True)
         files = sorted(tmp.glob("q_*.jpg"))
         items = []

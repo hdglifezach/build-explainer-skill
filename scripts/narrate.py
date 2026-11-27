@@ -8,19 +8,23 @@ script.txt: one narration line per text line. Lines starting with # are ignored.
   A line ending in  "|| 0.8"  forces the pause AFTER it (seconds).
   Lines that start with "That's the" / "Those are the" get --term-gap after them (room for the ding + flash).
 Writes vo.wav (48 kHz mono, peak -3 dBFS) and vo_lines.json [{i, text, s, e}].
-Then run ears.py on vo.wav for exact word times:
-  python -X utf8 <word-timestamp tool, e.g. ears.py> vo.wav --no-separate --no-events --no-speakers
+Then get exact word times (writes audio/vo.scan/ears.json + ears.md):
+  python -X utf8 transcribe.py vo.wav --vocab "Term1,Term2"
 """
 import argparse
 import json
 import os
 import re
+import sys
 
 import numpy as np
 import soundfile as sf
 from scipy import signal
 
-MODELS = os.environ.get("KOKORO_MODELS", "")  # folder with kokoro-v1.0.onnx + voices-v1.0.bin
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from bx_config import cfg  # noqa: E402
+
+MODELS = cfg("kokoro_models")  # folder with kokoro-v1.0.onnx + voices-v1.0.bin (config.json)
 
 
 def trim(a, sr, thr=0.008):

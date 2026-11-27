@@ -7,3 +7,5 @@ snaps/
 *.wav
 *.mp4
 *.blend
+config.json
+fonts/

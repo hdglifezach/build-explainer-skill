@@ -10,6 +10,7 @@ audio/cues.json for earshot timeline. One pass, one limiter (owner rule: no doub
 import importlib.util
 import json
 import re
+import os
 import subprocess
 import sys
 from pathlib import Path
@@ -18,6 +19,10 @@ import numpy as np
 import soundfile as sf
 from scipy import signal
 
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from bx_config import cfg  # noqa: E402
+
+FFMPEG = cfg("ffmpeg")
 SR = 48000
 TARGET, CEIL = -14.0, -1.5
 
@@ -36,7 +41,7 @@ def db(g):
 
 
 def lufs(path):
-    p = subprocess.run(["ffmpeg", "-hide_banner", "-nostats", "-i", str(path), "-af",
+    p = subprocess.run([FFMPEG, "-hide_banner", "-nostats", "-i", str(path), "-af",
                         f"loudnorm=I={TARGET}:TP={CEIL}:print_format=json", "-f", "null", "-"],
                        capture_output=True, text=True)
     j = json.loads(re.findall(r"\{[^{}]+\}", p.stderr)[-1])
