@@ -9,7 +9,7 @@ description: Make a 75-150 s vertical (1080x1920, 60 fps) "build it from scratch
 missing run `python setup/install.py` from the skill folder, see README). Keys: `python` (venv python), `blender`, `ffmpeg`,
 `kokoro_models`, `films_dir`, `encoder`, `font_bold`, `font_mono`. Below, `$PY` = config `python`, `$BLENDER` = config `blender`,
 `$FILMS` = config `films_dir`, `$SKILL` = this skill's folder (the scripts read config.json themselves).
-VideoHub (steps 9-10) and earshot are the owner's optional private tools and can be skipped.
+VideoHub (steps 9-10) and earshot are optional tools from the author's own setup and can be skipped.
 
 One film = one folder `$FILMS/<slug>/` (slug like `build-a-castle`).
 Reference film (copy its files to start): `<skill>/templates/castle_*` (castle_build.py -> build.py, castle_spec.py -> spec.py, castle_script.*, plus scripts/bx_kit.py)
@@ -169,8 +169,7 @@ re-encode and re-check those ranges.
 ### 9. VideoHub (manual registration; VideoHub's browser render.js is NOT for Blender films)
 Write `.videohub/project.json` `{"title": ..., "status": "review", "updated": ISO}` and `.videohub/versions.json`
 (`[{"v":1,"file":"<slug>_v1.mp4","kind":"final","created":ISO,"job":"manual","mode":"manual","session":{"title":"Claude"},
-"parent":null,"changedRanges":null,"chunks":null,"notes":[],"note":"..."}]`), like `films/cookie-3am-roblox/.videohub/`.
-(Owner-specific: also junction the film folder into a renders folder.)
+"parent":null,"changedRanges":null,"chunks":null,"notes":[],"note":"..."}]`).
 Then VERIFY VideoHub sees the video: the VideoHub CLI `hub_project` must print `Latest video: <slug>_vN.mp4`.
 If it prints `Latest video: —`, VideoHub cached a failed ffprobe (VideoHub's `data/probe-cache.json` shows `ok: false`; it has
 happened even after the file was complete): `touch` the mp4, `curl -X POST http://127.0.0.1:7788/api/scan`, wait ~30 s, check again
